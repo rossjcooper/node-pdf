@@ -7,11 +7,15 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.get('/export/pdf', (req, res) => {
+router.post('/export/pdf', (req, res) => {
 	(async () => {
 		const browser = await puppeteer.launch()
 		const page = await browser.newPage()
-		await page.goto(req.query.url)
+		if (req.body.url !== undefined) {
+			await page.goto(req.body.url)
+		}else if (req.body.html !== undefined) {
+			await page.setContent(req.body.html);
+		}
 		const buffer = await page.pdf({
 			format: 'A4',
 			printBackground: true,
