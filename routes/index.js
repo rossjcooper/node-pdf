@@ -3,8 +3,8 @@ var router = express.Router();
 const puppeteer = require('puppeteer')
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-
+router.get('/ping', function(req, res, next) {
+	res.send('OK');
 });
 
 router.post('/export/pdf', (req, res) => {
