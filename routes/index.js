@@ -7,12 +7,12 @@ router.get('/ping', function(req, res, next) {
 	res.send('OK');
 });
 
-router.post('/export/pdf', (req, res) => {
+router.all('/export/pdf', (req, res) => {
 	(async () => {
 		const browser = await puppeteer.launch()
 		const page = await browser.newPage()
-		if (req.body.url !== undefined) {
-			await page.goto(req.body.url)
+		if (req.query.url !== undefined) {
+			await page.goto(req.query.url)
 		}else if (req.body.html !== undefined) {
 			await page.setContent(req.body.html);
 		}
