@@ -7,14 +7,33 @@ router.get('/ping', function(req, res, next) {
 	res.send('OK');
 });
 
-router.all('/export/pdf', (req, res) => {
+router.all('/export/pdf', (req, res, next) => {
 	(async () => {
-		const browser = await puppeteer.launch()
+		const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
 		const page = await browser.newPage()
 		if (req.query.url !== undefined) {
-			await page.goto(req.query.url)
+			try {
+				await page.goto(req.query.url)
+			} catch (err) {
+				res.status(400)
+				res.send(JSON.stringify({ error: 'Failed to open URL' }))
+				browser.close();
+				return;
+			}
 		}else if (req.body.html !== undefined) {
-			await page.setContent(req.body.html);
+			try {
+				await page.setContent(req.body.html);
+			} catch (err) {
+				res.status(400)
+				res.send(JSON.stringify({ error: 'Failed to parse HTML' }))
+				browser.close();
+				return;
+			}
+		} else {
+			res.status(400)
+			res.send(JSON.stringify({ error: 'URL or HTML data missing' }))
+			browser.close();
+			return;
 		}
 		let footerTemplate = req.query.footer_html || '';
 		if (req.query.show_page_numbers) {
