@@ -16,9 +16,15 @@ router.all('/export/pdf', (req, res) => {
 		}else if (req.body.html !== undefined) {
 			await page.setContent(req.body.html);
 		}
+		let footerTemplate = req.query.footer_html || '';
+		if (req.query.show_page_numbers) {
+			footerTemplate = '<div style="position: relative; z-index: 9999; width: 100%; font-size: 10px; margin-right: .75cm; text-align: right;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>';
+		}
 		const buffer = await page.pdf({
 			format: 'A4',
 			printBackground: true,
+			displayHeaderFooter: footerTemplate ? true : false,
+			footerTemplate: footerTemplate
 		})
 		res.type('application/pdf')
 		res.send(buffer)

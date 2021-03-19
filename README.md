@@ -19,3 +19,15 @@ Make a POST request to `http://localhost:3000/export/pdf` with JSON body:
 	"html": "<h1>Test</h1>"
 }
 ```
+
+## PDF Page Options
+
+
+### Page Footer
+
+You can set the footer HTML by passing it through the URL query parameter `?footer_html=Example Footer`
+
+### Page Numbers
+You can show page numbers using the following URL query parameter `?show_page_numbers=true`.
+
+_Note: setting the `footer_html` option will override the page numbers._
