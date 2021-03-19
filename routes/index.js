@@ -10,6 +10,7 @@ router.get('/ping', function(req, res, next) {
 router.all('/export/pdf', (req, res) => {
 	(async () => {
 		const browser = await puppeteer.launch()
+		const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
 		const page = await browser.newPage()
 		if (req.query.url !== undefined) {
 			await page.goto(req.query.url)
