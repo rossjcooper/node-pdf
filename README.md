@@ -31,3 +31,17 @@ You can set the footer HTML by passing it through the URL query parameter `?foot
 You can show page numbers using the following URL query parameter `?show_page_numbers=true`.
 
 _Note: setting the `footer_html` option will override the page numbers._
+
+## Docker
+
+### Build docker image locally from source
+
+```
+docker build -t node-pdf .
+```
+
+### Running local docker image
+
+```
+docker run --name node-pdf -p 3000:3000 -it --rm node-pdf
+```
