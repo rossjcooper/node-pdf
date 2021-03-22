@@ -35,15 +35,17 @@ router.all('/export/pdf', (req, res, next) => {
 			browser.close();
 			return;
 		}
-		let footerTemplate = req.query.footer_html || '';
-		if (req.query.show_page_numbers) {
+		let footerTemplate = req.query.footer_html || req.body.footer_html || '<div/>';
+		let headerTemplate = req.query.header_html || req.body.header_html || '<div/>';
+		if (req.query.show_page_numbers || req.body.show_page_numbers) {
 			footerTemplate = '<div style="position: relative; z-index: 9999; width: 100%; font-size: 10px; margin-right: .75cm; text-align: right;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>';
 		}
 		const buffer = await page.pdf({
 			format: 'A4',
 			printBackground: true,
-			displayHeaderFooter: footerTemplate ? true : false,
-			footerTemplate: footerTemplate
+			displayHeaderFooter: footerTemplate || headerTemplate ? true : false,
+			headerTemplate: headerTemplate,
+			footerTemplate: footerTemplate,
 		})
 		res.type('application/pdf')
 		res.send(buffer)
