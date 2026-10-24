@@ -48,11 +48,18 @@ _Note: setting the `footer_html` option will override the page numbers._
 ### Build docker image locally from source
 
 ```
-docker build -t node-pdf .
+docker build --platform linux/amd64 -t node-pdf .
 ```
 
 ### Running local docker image
 
 ```
 docker run --name node-pdf -p 3000:3000 -it --rm node-pdf
+```
+
+### Push new image to dockerhub
+
+```
+docker image tag node-pdf rossjcooper/node-pdf:latest
+docker push rossjcooper/node-pdf:latest
 ```

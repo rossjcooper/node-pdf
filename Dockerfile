@@ -1,25 +1,34 @@
-FROM node:12
+# Prod is linux/amd64. Without this, a build on Apple Silicon is arm64 and
+# Docker 20.10.17 exits with "exec format error".
+FROM --platform=linux/amd64 node:24-bookworm
 EXPOSE 3000
 
-RUN apt-get update \
-	&& apt-get install -y wget gnupg \
-	&& wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-	&& sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-	&& apt-get update \
-	&& apt-get install -y curl google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-	--no-install-recommends \
-	&& rm -rf /var/lib/apt/lists/*
-
-ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/google-chrome-stable"
+# Fonts for PDF text. Chrome and its shared libraries come from Puppeteer.
+# apt lists stay available until Puppeteer runs `apt-get satisfy` for Chrome.
+ENV LANG=en_US.UTF-8
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci 
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		ca-certificates \
+		curl \
+		dbus \
+		dbus-x11 \
+		fonts-freefont-ttf \
+		fonts-ipafont-gothic \
+		fonts-kacst \
+		fonts-khmeros \
+		fonts-thai-tlwg \
+		fonts-wqy-zenhei \
+	&& npm ci \
+	&& npx puppeteer browsers install chrome --install-deps \
+	&& rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
-CMD npm run start
+CMD ["npm", "run", "start"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl -f localhost:3000/ping || exit 1
