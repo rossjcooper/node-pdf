@@ -60,6 +60,6 @@ docker run --name node-pdf -p 3000:3000 -it --rm node-pdf
 ### Push new image to dockerhub
 
 ```
-docker image tag node-pdf rossjcooper/node-pdf:latest
-docker push rossjcooper/node-pdf:latest
+docker image tag node-pdf craftaweb/node-pdf:latest
+docker push craftaweb/node-pdf:latest
 ```
